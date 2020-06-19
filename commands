@@ -1,0 +1,74 @@
+(1)
+Creating table in hive :
+create table petrol(distributer_id STRING, distributer_name STRING, amt_IN STRING, amy_OUT STRING, vol_IN INT, vol_OUT INT, year INT) row format delimited fields terminated by "," stored as textfile;
+
+Loading the file into table :
+load data local inpath "/home/cloudera/Downloads/petrol.txt" into table petrol
+
+Using GROUP BY operator , displaying the amount of petrol sold out by each distributer :
+SELECT distributer_name,SUM(vol_OUT)  FROM  petrol GROUP  BY distributer_name;
+
+Using ORDER BY , to display the amount of petrol sold by top 10 distributors :
+SELECT distributer_id,vol_OUT FROM petrol order by vol_OUT desc limit 10;
+
+Using ORDER BY , to display the amount of petrol sold by least 10 distributors :
+SELECT distributer_id,vol_OUT FROM petrol order by vol_OUT limit 10;
+
+Using CLUSTER BY :
+SELECT distributer_id,vol_OUT FROM petrol cluster by distributer_id;
+
+Using DISTRIBUTED BY and SORT BY :
+SELECT distributer_id,vol_OUT FROM petrol distribute by distributer_id sort by vol_OUT;
+
+
+(2)
+Creating table in hive :
+create table Olympics(athelete STRING, age INT, country STRING, year STRING, closing STRING, sport STRING, gold INT, silver INT, bronze INT, total INT) row format delimited fields terminated by "\t" stored as textfile;
+
+Loading the file into table :
+load data local inpath "/home/cloudera/Downloads/olympic_data.csv" into table Olympics;
+
+Displays number of medals won by Australia grouped by year :
+select year,SUM(total) from Olympics where country = 'Australia' GROUP BY year;
+
+Displays number of medals won by each country in shooting :
+select country,SUM(total) from olympicwhere sport = 'Shooting' GROUP BY country;
+
+Displays which country got medals for swimming in the order or year :
+select country,year from Olympics where sport = 'Swimming' group by country,year order by year;
+
+Find the total number of medals each country won display the name along with total medals :
+select country,SUM(total) from Olympics GROUP BY country;
+
+Displays number of gold medals won by each country :
+select country,SUM(gold) from Olympics GROUP BY country;
+
+
+(3)
+Creating table ratings in hive :
+create table ratings(userID INT, movieid INT, rating INT, timestamp STRING) row format delimited fields terminated by "," stored as textfile;
+
+Loading the file into table :
+load data local inpath "/home/cloudera/Downloads/ratings.csv" into table ratings;
+
+Creating table movies in hive :
+create table movies(movieid INT, title STRING, genres STRING) row format delimited fields terminated by "," stored as textfile;
+
+Loading the file into table :
+load data local inpath "/home/cloudera/Downloads/movies.csv" into table movies;
+
+Creating table users in hive :
+create users (userid INT, gender STRING , number INT, rate INT, zip STRING) row format delimited fields terminated by "," stored as textfile;
+
+Loading the file into table :
+load data local inpath "/home/cloudera/Downloads/users.txt" into table users;
+
+Displays all movies with genre of movie is “Drama” and “Action” :
+select * from movies where genres like '%Drama%' and genres like '%Action%';
+
+Displays movie ids of all movies with rating equal to 5 :
+select movieid,rating from ratings where rating=5;
+
+Displays top 11 average rated "Action" movies with descending order of rating :
+select m.title,avg(r.rating) as x from movies m join ratings r on (m.movieid=r.movieid) where m.genres like '%Action%' group by m.title order by x desc limit 11;
+
